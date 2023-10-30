@@ -30,13 +30,15 @@ export class EnsModule {
     this.resolverContract = new this.web3.eth.Contract(this.publicResolverAbi, this.publicResolverAddr);
 
     this.providerForENS = new HttpProvider(this.chain.rpc);
-    this.ens = new Ens({ provider: this.providerForENS, network: '1' });
+    this.ens = new Ens({ provider: this.providerForENS, network: this.chain.chainId });
 
     this.duration = getDaysInSeconds(domainDuration);
   }
 
   async register() {
-    if (await this.isAlreadyRegistered()) {
+    const isAlreadyRegistered = await this.isAlreadyRegistered();
+    if (isAlreadyRegistered) {
+      console.log(`Wallet: ${this.walletAddress} is already have ENS.`);
       return false;
     }
 
@@ -131,6 +133,8 @@ export class EnsModule {
       console.log(
         `${this.protocolName}. ${this.walletAddress}: Registered ${name}.eth | TX: ${this.chain.explorer}/${registerSendTransactionResult.transactionHash}`
       );
+
+      return true;
     } catch (e) {
       if (e.message.includes('insufficient funds')) {
         const [balance, fee, value] = extractNumbersFromString(e.message);
@@ -144,6 +148,7 @@ export class EnsModule {
       } else {
         console.error(e);
       }
+      return false;
     }
   }
 
@@ -159,8 +164,9 @@ export class EnsModule {
   async isAlreadyRegistered() {
     try {
       const name = await this.ens.reverse(this.walletAddress);
+      const ensName = await this.ens.lookup(name);
 
-      if (this.walletAddress != (await this.ens.lookup(name))) {
+      if (this.walletAddress.toLowerCase() != ensName) {
         name = null;
       }
 
@@ -181,4 +187,6 @@ export class EnsModule {
     const encodedAbi = this.resolverContract.methods.setAddr(nameHash, coinType, addrCalldata).encodeABI();
     return [encodedAbi];
   }
+
+
 }

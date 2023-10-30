@@ -6,10 +6,10 @@ import { once } from 'events';
 
 const __dirname = path.resolve();
 
-export const importWallets = async (filename) => {
+export const importPrivatesKeys = async () => {
   const privateKeys = [];
 
-  const instream = fs.createReadStream(path.join(__dirname, `./${filename}`));
+  const instream = fs.createReadStream(path.join(__dirname, './eth_privates.txt'));
   const outstream = new stream.Stream();
 
   const rl = readline.createInterface(instream, outstream);
@@ -21,8 +21,4 @@ export const importWallets = async (filename) => {
   await once(rl, 'close');
 
   return privateKeys;
-};
-
-export const importETHWallets = async () => {
-  return importWallets('eth_privates.txt');
 };

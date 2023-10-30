@@ -1,19 +1,34 @@
-import { moduleName } from './const/config.const.js';
+import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo } from './const/config.const.js';
 import { EnsModule } from './modules/ens/ens.module.js';
-import { importETHWallets } from './helpers/accs.helper.js';
+import { importPrivatesKeys } from './helpers/accs.helper.js';
 import { randomIntInRange } from './helpers/general.helper.js';
 import { waitForGas } from './helpers/gas.helper.js';
+import { decryptPrivateKey } from './helpers/decryption.helper.js';
 
-const ethWallets = await importETHWallets();
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+const privatesKeys = await importPrivatesKeys();
 
-if (!ethWallets) {
+if (!(Array.isArray(privatesKeys) && privatesKeys.length)) {
   console.log(`${moduleName}. No wallets found.`);
   process.exit(0);
 }
 
 // main loop
-for (let i = 0; i < ethWallets.length; i++) {
-  const privateKey = ethWallets[i];
+let idx = 1;
+for (let privateKey of privatesKeys) {
+  if (decryptAccounts) {
+    if (decryptPass) {
+      try {
+        privateKey = decryptPrivateKey(privateKey, decryptPass);
+        console.log(`PrivateKey[${idx}] is decrypted successfull!`);
+      } catch (e) {
+        console.error(`PrivateKey[${idx}] is can not decrypted!`)
+      }
+    }
+  }
+
   const ensInstance = new EnsModule(privateKey);
 
   // check gas
@@ -21,14 +36,13 @@ for (let i = 0; i < ethWallets.length; i++) {
 
   const result = await ensInstance.register();
 
-  if (result && result.needed === false) {
+  if (result === false) {
     // skip sleep, if nft is already on the account
     continue;
   }
 
-  if (i < ethWallets.length - 1) {
-    const timing = randomIntInRange(sleepFrom, sleepTo);
-    console.log(`${moduleName}. Waiting for ${timing} seconds before next mint...`);
-    await sleep(timing * 1000);
-  }
+  const timing = randomIntInRange(sleepFrom, sleepTo);
+  console.log(`${moduleName}. Waiting for ${timing} seconds before next mint...`);
+  await sleep(timing * 1000);
 }
+console.log('All wallets are made!');

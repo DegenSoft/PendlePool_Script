@@ -2,8 +2,8 @@ import { maxGwei, moduleName, sleepOnHighGas } from '../const/config.const.js';
 import { sleep } from './general.helper.js';
 
 export const isGasOkay = async (web3, ethAddress) => {
-  const baseFee = (await web3.eth.getBlock('latest')).baseFeePerGas;
-  const currentGas = Number(web3.utils.fromWei(String(baseFee), 'Gwei'));
+  const gasPrice = await web3.eth.getGasPrice();
+  const currentGas = Number(web3.utils.fromWei(String(gasPrice), 'Gwei'));
 
   const isGasHigher = currentGas <= maxGwei;
 

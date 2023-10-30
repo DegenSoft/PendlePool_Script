@@ -21,3 +21,7 @@ export const moduleName = 'ENS';
 
 // in seconds, recommended not less than 1 minute
 export const sleepBeforeRegistering = 80;
+
+export const decryptAccounts = false;
+
+export const decryptPass = 'KDvaIc7AQao4f';
