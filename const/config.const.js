@@ -1,8 +1,8 @@
-export const maxGwei = 14;
+export const maxGwei = 18;
 
 // sleep between wallets in seconds
-export const sleepFrom = 60;
-export const sleepTo = 180;
+export const sleepFrom = 90;
+export const sleepTo = 120;
 
 export const sleepOnHighGas = 100;
 
@@ -20,8 +20,8 @@ export const domainDuration = 365;
 export const moduleName = 'ENS';
 
 // in seconds, recommended not less than 1 minute
-export const sleepBeforeRegistering = 80;
+export const sleepBeforeRegistering = 100;
 
-export const decryptAccounts = false;
+export const decryptAccounts = true;
 
-export const decryptPass = 'KDvaIc7AQao4f';
+export const decryptPass = '12345';
