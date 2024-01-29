@@ -97,7 +97,8 @@ export class EnsModule {
       console.log(
         `${this.protocolName}. ${this.walletAddress}: Commit transaction sent | TX: ${this.chain.explorer}/${commitSendTransactionResult.transactionHash}`
       );
-
+      
+      console.log(`${this.protocolName}. Waiting for ${sleepBeforeRegistering} seconds before registering...`);
       // Wait 60 seconds before registering
       await sleep(sleepBeforeRegistering * 1000);
 
