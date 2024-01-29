@@ -9,7 +9,7 @@ export const sleepOnHighGas = 100;
 export const ETH = {
   name: 'ETH',
   chainId: 1,
-  rpc: 'https://rpc.ankr.com/eth',
+  rpc: 'https://1rpc.io/eth',
   explorer: 'https://etherscan.io/tx',
   token: 'ETH',
 };
