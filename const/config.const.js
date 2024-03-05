@@ -14,6 +14,14 @@ export const ETH = {
   token: 'ETH',
 };
 
+export const POL = {
+  name: 'POL',
+  chainId: 137,
+  rpc: 'https://polygon.llamarpc.com',
+  explorer: 'https://polygonscan.com/tx',
+  token: 'MATIC',
+};
+
 // in days
 export const domainDuration = 365;
 

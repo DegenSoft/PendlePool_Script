@@ -12,10 +12,12 @@
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.21",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "ethers": "5.7.2",
+    "axios": "^1.6.7",
+    "crypto-js": "4.1.1",
+    "ethers": "^5.7.2",
     "ethjs-ens": "^2.0.1",
     "ethjs-provider-http": "^0.1.6",
-    "web3": "1.10.0",
-    "crypto-js": "4.1.1"
+    "graphql-request": "^6.1.0",
+    "web3": "1.10.0"
   }
 }
