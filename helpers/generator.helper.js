@@ -32,5 +32,3 @@ export const generateBio = () => {
 
     return `${expert} in ${interest}.\n${activity}.`;
 };
-
-console.log(generateBio())

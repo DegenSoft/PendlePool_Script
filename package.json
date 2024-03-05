@@ -1,11 +1,11 @@
 {
-  "name": "ens-sim",
+  "name": "lens-sim",
   "version": "1.0.0",
   "description": "",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "npm i && node main.js"
   },
   "author": "sim",
   "license": "ISC",
@@ -17,7 +17,9 @@
     "ethers": "^5.7.2",
     "ethjs-ens": "^2.0.1",
     "ethjs-provider-http": "^0.1.6",
+    "fake-useragent": "^1.0.1",
     "graphql-request": "^6.1.0",
-    "web3": "1.10.0"
+    "web3": "1.10.0",
+    "winston": "^3.12.0"
   }
 }

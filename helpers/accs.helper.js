@@ -9,7 +9,7 @@ const __dirname = path.resolve();
 export const importPrivatesKeys = async () => {
   const privateKeys = [];
 
-  const instream = fs.createReadStream(path.join(__dirname, './eth_privates.txt'));
+  const instream = fs.createReadStream(path.join(__dirname, './wallets.txt'));
   const outstream = new stream.Stream();
 
   const rl = readline.createInterface(instream, outstream);

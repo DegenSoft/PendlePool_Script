@@ -1,9 +1,12 @@
 import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo } from './const/config.const.js';
-import { EnsModule } from './modules/ens/ens.module.js';
 import { importPrivatesKeys } from './helpers/accs.helper.js';
 import { randomIntInRange } from './helpers/general.helper.js';
 import { waitForGas } from './helpers/gas.helper.js';
 import { decryptPrivateKey } from './helpers/decryption.helper.js';
+import { LensModule } from './modules/lens/lens.module.js';
+import { banner, logger } from './helpers/logger.helper.js';
+
+console.log(banner)
 
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -11,7 +14,7 @@ const sleep = (ms) => {
 const privatesKeys = await importPrivatesKeys();
 
 if (!(Array.isArray(privatesKeys) && privatesKeys.length)) {
-  console.log(`${moduleName}. No wallets found.`);
+  logger.warn(`${moduleName}. No wallets found.`);
   process.exit(0);
 }
 
@@ -22,27 +25,28 @@ for (let privateKey of privatesKeys) {
     if (decryptPass) {
       try {
         privateKey = decryptPrivateKey(privateKey, decryptPass);
-        console.log(`PrivateKey[${idx}] is decrypted successfull!`);
+        if(privateKey === '') throw new Error();
+        logger.info(`PrivateKey[${idx}] is decrypted successfull!`);
       } catch (e) {
-        console.error(`PrivateKey[${idx}] is can not decrypted!`)
+        logger.warn(`PrivateKey[${idx}] is can not decrypted!`);
+        continue
       }
     }
   }
-
-  const ensInstance = new EnsModule(privateKey);
+  try {
+  const lensInstance = new LensModule(privateKey);
 
   // check gas
-  await waitForGas(ensInstance.web3, ensInstance.walletAddress);
+  await waitForGas(lensInstance.web3Eth, lensInstance.walletAddress);
 
-  const result = await ensInstance.register();
+  await lensInstance.register();
+  
+} catch (error) {
+    logger.error(error);
 
-  if (result === false) {
-    // skip sleep, if nft is already on the account
-    continue;
-  }
-
+}
   const timing = randomIntInRange(sleepFrom, sleepTo);
-  console.log(`${moduleName}. Waiting for ${timing} seconds before next mint...`);
+  logger.info(`${moduleName}. Waiting for ${timing} seconds before next mint...`);
   await sleep(timing * 1000);
 }
-console.log('All wallets are made!');
+logger.info('All wallets are made!');

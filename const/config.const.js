@@ -1,4 +1,4 @@
-export const maxGwei = 18;
+export const maxGwei = 300;
 
 // sleep between wallets in seconds
 export const sleepFrom = 90;
@@ -17,7 +17,7 @@ export const ETH = {
 export const POL = {
   name: 'POL',
   chainId: 137,
-  rpc: 'https://polygon.llamarpc.com',
+  rpc: 'https://polygon-rpc.com',
   explorer: 'https://polygonscan.com/tx',
   token: 'MATIC',
 };
@@ -25,11 +25,11 @@ export const POL = {
 // in days
 export const domainDuration = 365;
 
-export const moduleName = 'ENS';
+export const moduleName = 'Lens';
 
 // in seconds, recommended not less than 1 minute
 export const sleepBeforeRegistering = 100;
 
-export const decryptAccounts = true;
+export const decryptAccounts = false;
 
 export const decryptPass = '12345';
