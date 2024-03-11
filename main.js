@@ -1,26 +1,38 @@
-import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo } from './const/config.const.js';
-import { importPrivatesKeys } from './helpers/accs.helper.js';
+import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo, proxyURL, changeURL } from './const/config.const.js';
+import { importPrivatesKeys, importProxies } from './helpers/accs.helper.js';
 import { randomIntInRange } from './helpers/general.helper.js';
 import { waitForGas } from './helpers/gas.helper.js';
 import { decryptPrivateKey } from './helpers/decryption.helper.js';
 import { LensModule } from './modules/lens/lens.module.js';
 import { banner, logger } from './helpers/logger.helper.js';
-
-console.log(banner)
+import { Proxy } from './helpers/proxy.helper.js';
 
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 const privatesKeys = await importPrivatesKeys();
+const proxy = await importProxies();
 
 if (!(Array.isArray(privatesKeys) && privatesKeys.length)) {
   logger.warn(`${moduleName}. No wallets found.`);
   process.exit(0);
 }
 
+if (proxy.length < privatesKeys.length && proxy.length != 0){
+  logger.warn(`${moduleName}. Proxy count less than wallets.`);
+  process.exit(0);
+}
+
+if (proxy.length == 0) {
+  privatesKeys.forEach((el, i) => {
+    proxy[i] = proxyURL;
+  });
+}
+
 // main loop
 let idx = 1;
 for (let privateKey of privatesKeys) {
+  
   if (decryptAccounts) {
     if (decryptPass) {
       try {
@@ -34,8 +46,12 @@ for (let privateKey of privatesKeys) {
     }
   }
   try {
-  const lensInstance = new LensModule(privateKey);
+  const proxyInstanse = new Proxy(proxy[privatesKeys.indexOf(privateKey)]);
+  const lensInstance = new LensModule(privateKey, proxyInstanse);
 
+  await proxyInstanse.getIP();
+
+  await proxyInstanse.changeIP();
   // check gas
   await waitForGas(lensInstance.web3Eth, lensInstance.walletAddress);
 

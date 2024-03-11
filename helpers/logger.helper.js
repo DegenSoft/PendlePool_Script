@@ -8,6 +8,7 @@ var logLevels = {
         info: 2,
         warn: 2,
         error: 2,
+        proxy: 2
     }
 };
 
@@ -21,6 +22,7 @@ export const logger = winston.createLogger({
         info: 'magenta',
         warn: 'yellow',
         error: 'red',
+        proxy: 'magenta'
     }}),
     winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`+(info.splat!==undefined?`${info.splat}`:" "))
   ),

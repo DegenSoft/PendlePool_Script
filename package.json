@@ -19,6 +19,8 @@
     "ethjs-provider-http": "^0.1.6",
     "fake-useragent": "^1.0.1",
     "graphql-request": "^6.1.0",
+    "https-proxy-agent": "^7.0.4",
+    "node-fetch": "^3.3.2",
     "web3": "1.10.0",
     "winston": "^3.12.0"
   }

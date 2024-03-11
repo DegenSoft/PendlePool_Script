@@ -33,3 +33,8 @@ export const sleepBeforeRegistering = 100;
 export const decryptAccounts = false;
 
 export const decryptPass = '12345';
+
+//Mobile Proxy
+export const proxyURL = '';
+
+export const changeURL = '';

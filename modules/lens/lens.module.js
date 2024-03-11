@@ -1,10 +1,9 @@
 import { gql, GraphQLClient } from "graphql-request";
 import Web3 from "web3";
-import axios from "axios";
 import FormData from 'form-data';
 import fakeUa from "fake-useragent";
 import fs from 'fs';
-
+import fetch from 'node-fetch'
 import { generateBio, generateName, generateUUID } from "../../helpers/generator.helper.js";
 import { getAbiByRelativePath, sleep } from "../../helpers/general.helper.js";
 import { getImage } from "../../helpers/img.helper.js";
@@ -16,8 +15,8 @@ import { logger } from "../../helpers/logger.helper.js";
 
 
 export class LensModule {
-  constructor(privateKey) {
-    
+  constructor(privateKey, proxy) {
+    this.proxy = proxy;
     this.chain = POL;
     this.web3 = new Web3(this.chain.rpc);
     this.web3Eth = new Web3(ETH.rpc);
@@ -37,6 +36,7 @@ export class LensModule {
     this.endpoint = "https://api-v2.lens.dev/";
     this.metadataEndpoint = "https://api.hey.xyz/metadata";
     this.graphClient = new GraphQLClient(this.endpoint, {
+      fetch:(url, init) => fetch(url, { agent: this.proxy.proxyAgent, ...init }),
       jsonSerializer: {
         parse: JSON.parse,
         stringify: JSON.stringify,
@@ -49,6 +49,7 @@ export class LensModule {
         "X-Requested-From": "hey",
       },
     });
+    
   }
 
   async loadImage() {
@@ -59,10 +60,9 @@ export class LensModule {
       fs.createReadStream('./buffer.jpg')
     );
 
+    let url = "https://www.lens.xyz/api/metadata/file";
     let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://www.lens.xyz/api/metadata/file",
+      method: "post",      
       headers: {
         Origin: "https://www.lens.xyz",
         Refferer: "https://www.lens.xyz/",
@@ -70,18 +70,17 @@ export class LensModule {
           "multipart/form-data;",
         ...data.getHeaders(),
       },
-      data: data,
+      body: data,
     };
 
-    const response = await axios
-      .request(config)
+    const response = await this.proxy.sendRequest(url, config)
       .then((response) => {
         return response.data;
       })
       .catch((error) => {
         logger.error(error);
       });
-      this.profileImg = response.data;
+      this.profileImg = response;
       await getImage()
     logger.info('Image loaded, upload new to buffer.jpg')
   }
@@ -224,10 +223,9 @@ export class LensModule {
       },
     };
     logger.info(`Edit profile info:\n Name | ${this.name}\n Description | ${payload.lens.bio}`)
-    const metadataId = await axios.post(this.metadataEndpoint, payload, {
-      headers: { Origin: "https://hey.xyz", Referer: "https://hey.xyz/" },
-    });
-    await this.setProfileMetadata(metadataId.data.id);
+    const metadataId = await this.proxy.sendRequest(this.metadataEndpoint, { method:'POST', body: payload,
+      headers: { Origin: "https://hey.xyz", Referer: "https://hey.xyz/" }})
+    await this.setProfileMetadata(metadataId.id);
   }
 
   async refreshAuth() {
