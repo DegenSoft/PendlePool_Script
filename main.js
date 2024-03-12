@@ -29,22 +29,23 @@ if (proxy.length == 0) {
   });
 }
 
-// main loop
-let idx = 1;
-for (let privateKey of privatesKeys) {
-  
-  if (decryptAccounts) {
-    if (decryptPass) {
-      try {
-        privateKey = decryptPrivateKey(privateKey, decryptPass);
-        if(privateKey === '') throw new Error();
-        logger.info(`PrivateKey[${idx}] is decrypted successfull!`);
-      } catch (e) {
-        logger.warn(`PrivateKey[${idx}] is can not decrypted!`);
-        continue
-      }
+if (decryptAccounts) {
+  if (decryptPass) {
+    privatesKeys.forEach((privateKey, i)=>{
+    try {
+      privatesKeys[i] = decryptPrivateKey(privateKey, decryptPass);
+      if(privateKey === '') throw new Error();
+      logger.info(`PrivateKey[${i}] is decrypted successfull!`);
+    } catch (e) {
+      logger.warn(`PrivateKey[${i}] is can not decrypted!`);
     }
-  }
+  })
+ }
+}
+
+// main loop
+for (let privateKey of privatesKeys) {
+
   try {
   const proxyInstanse = new Proxy(proxy[privatesKeys.indexOf(privateKey)]);
   const lensInstance = new LensModule(privateKey, proxyInstanse);
