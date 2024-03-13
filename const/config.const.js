@@ -1,4 +1,4 @@
-export const maxGwei = 300;
+export const maxGwei = 60;
 
 // sleep between wallets in seconds
 export const sleepFrom = 90;
