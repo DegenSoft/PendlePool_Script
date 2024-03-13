@@ -22,13 +22,7 @@ export const POL = {
   token: 'MATIC',
 };
 
-// in days
-export const domainDuration = 365;
-
 export const moduleName = 'Lens';
-
-// in seconds, recommended not less than 1 minute
-export const sleepBeforeRegistering = 100;
 
 export const decryptAccounts = false;
 
