@@ -13,6 +13,8 @@ const sleep = (ms) => {
 const privatesKeys = await importPrivatesKeys();
 const proxy = await importProxies();
 
+console.log(banner);
+
 if (!(Array.isArray(privatesKeys) && privatesKeys.length)) {
   logger.warn(`${moduleName}. No wallets found.`);
   process.exit(0);
