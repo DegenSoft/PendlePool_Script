@@ -1,8 +1,9 @@
-export const maxGwei = 18;
+export const maxGwei = 50;
+export const maxGweiLinea = 3;
 
 // sleep between wallets in seconds
-export const sleepFrom = 90;
-export const sleepTo = 120;
+export const sleepFrom = 1;
+export const sleepTo = 2;
 
 export const sleepOnHighGas = 100;
 
@@ -14,22 +15,22 @@ export const ETH = {
   token: 'ETH',
 };
 
-export const POL = {
-  name: 'POL',
-  chainId: 137,
-  rpc: 'https://1rpc.io/matic',
-  explorer: 'https://polygonscan.com/tx',
-  token: 'MATIC',
+
+export const LINEA = {
+  name: 'LINEA',
+  chainId: 59144,
+  rpc: 'https://1rpc.io/linea',
+  explorer: 'https://lineascan.build/tx',
+  token: 'ETH',
 }
 
-// in days
-export const domainDuration = 365;
+export const moduleName = 'Consensys';
 
-export const moduleName = 'ENS';
-
-// in seconds, recommended not less than 1 minute
-export const sleepBeforeRegistering = 100;
-
-export const decryptAccounts = true;
+export const decryptAccounts = false;
 
 export const decryptPass = '12345';
+
+//Mobile Proxy
+export const proxyURL = '';
+
+export const changeURL = '';
