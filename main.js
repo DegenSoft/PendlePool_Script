@@ -1,11 +1,11 @@
-import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo, proxyURL, changeURL } from './const/config.const.js';
+import { moduleName, decryptAccounts, decryptPass, sleepFrom, sleepTo, proxyURL } from './const/config.const.js';
 import { importPrivatesKeys, importProxies } from './helpers/accs.helper.js';
 import { randomIntInRange } from './helpers/general.helper.js';
-import { waitForGas } from './helpers/gas.helper.js';
+import { waitForGas, waitForGasLinea } from './helpers/gas.helper.js';
 import { decryptPrivateKey } from './helpers/decryption.helper.js';
-import { LensModule } from './modules/lens/lens.module.js';
 import { banner, logger } from './helpers/logger.helper.js';
 import { Proxy } from './helpers/proxy.helper.js';
+import { ConsensysModule } from './modules/consensys.module.js';
 
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -50,16 +50,24 @@ for (let privateKey of privatesKeys) {
 
   try {
   const proxyInstanse = new Proxy(proxy[privatesKeys.indexOf(privateKey)]);
-  const lensInstance = new LensModule(privateKey, proxyInstanse);
+  const consensysInstance = new ConsensysModule(privateKey, proxyInstanse);
 
   await proxyInstanse.getIP();
 
   await proxyInstanse.changeIP();
   // check gas
-  await waitForGas(lensInstance.web3Eth, lensInstance.walletAddress);
+  await waitForGas(consensysInstance.web3Eth, consensysInstance.walletAddress);
 
-  await lensInstance.register();
+  await consensysInstance.mintOpenEditionNFT();
   
+  const timing = randomIntInRange(sleepFrom, sleepTo);
+  logger.info(`${moduleName}. Waiting for ${timing} seconds before next mint...`);
+  await sleep(timing * 1000);
+
+  await waitForGasLinea(consensysInstance.web3Linea, consensysInstance.walletAddress);
+
+  await consensysInstance.mintCommunityEditionNFT();
+
 } catch (error) {
     logger.error(error);
 
