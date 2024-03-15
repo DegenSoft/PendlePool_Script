@@ -7,6 +7,10 @@ export const sleepTo = 2;
 
 export const sleepOnHighGas = 100;
 
+export const MINT_OPEN_EDITION = true;
+
+export const MINT_COMMUNITY_EDITION = true;
+
 export const ETH = {
   name: 'ETH',
   chainId: 1,
