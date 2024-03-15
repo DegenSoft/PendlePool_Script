@@ -1,13 +1,13 @@
-export const maxGwei = 50;
-export const maxGweiLinea = 3;
+export const maxGwei = 40;
+export const maxGweiLinea = 2;
 
 // sleep between wallets in seconds
-export const sleepFrom = 1;
-export const sleepTo = 2;
+export const sleepFrom = 90;
+export const sleepTo = 150;
 
-export const sleepOnHighGas = 100;
+export const sleepOnHighGas = 60;
 
-export const MINT_OPEN_EDITION = true;
+export const MINT_OPEN_EDITION = false;
 
 export const MINT_COMMUNITY_EDITION = true;
 
@@ -30,7 +30,7 @@ export const LINEA = {
 
 export const moduleName = 'Consensys';
 
-export const decryptAccounts = false;
+export const decryptAccounts = true;
 
 export const decryptPass = '12345';
 
