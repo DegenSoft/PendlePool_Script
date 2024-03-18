@@ -11,6 +11,8 @@ export const MINT_OPEN_EDITION = false;
 
 export const MINT_COMMUNITY_EDITION = true;
 
+export const MINT_IF_EXIST = true;
+
 export const ETH = {
   name: 'ETH',
   chainId: 1,

@@ -19,6 +19,8 @@ export class ConsensysModule {
       });
     this.web3Linea = new Web3(this.providerLinea);
 
+    this.communityNFTaddress = '0x9F44028C2F8959a5b15776e2FD936D5DC141B554';
+     
     this.apiEndpoint =
       "https://public-api.consensys-nft.com/v1/purchase-intents";
     this.privateKey = privateKey;
@@ -28,6 +30,12 @@ export class ConsensysModule {
 
     this.contractAddr = "0xAf9ba9f9d7Db062A119371Ea923ED274E3981163";
     this.contractABI = getAbiByRelativePath("./abi/consensysABI.json");
+    this.ERC1155ABI = getAbiByRelativePath("./abi/erc1155.json");
+    this.communityNFTcontract = new this.web3Linea.eth.Contract(
+      this.ERC1155ABI,
+      this.communityNFTaddress
+    );
+
     this.contract = new this.web3Eth.eth.Contract(
       this.contractABI,
       this.contractAddr
@@ -74,6 +82,12 @@ export class ConsensysModule {
         return txData;
     }
     return txData.data;
+  }
+
+  async ifExistCommunityEditonNFT() {
+    logger.info("Check if exist");
+    const balance = await this.communityNFTcontract.methods.balanceOf(this.walletAddress, 1).call();
+    return balance
   }
 
   async mintOpenEditionNFT() {

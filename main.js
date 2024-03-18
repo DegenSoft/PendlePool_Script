@@ -7,6 +7,7 @@ import {
   proxyURL,
   MINT_OPEN_EDITION,
   MINT_COMMUNITY_EDITION,
+  MINT_IF_EXIST,
 } from "./const/config.const.js";
 import { importPrivatesKeys, importProxies } from "./helpers/accs.helper.js";
 import { randomIntInRange } from "./helpers/general.helper.js";
@@ -75,6 +76,13 @@ for (let privateKey of privatesKeys) {
     }
 
     if (MINT_COMMUNITY_EDITION) {
+      if(!MINT_IF_EXIST){
+        const balance = await consensysInstance.ifExistCommunityEditonNFT();
+        if(balance > 0){
+          logger.info(`You have minted ${balance} NFT, skip wallet`);
+          continue;
+        } else logger.info(`NFT doesn't exist`);
+      }
       if (MINT_OPEN_EDITION) {
         const timing = randomIntInRange(sleepFrom, sleepTo);
         logger.info(
