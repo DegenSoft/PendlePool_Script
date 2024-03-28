@@ -19,18 +19,11 @@ export const ETH = {
   rpc: 'https://ethereum.publicnode.com',
   explorer: 'https://etherscan.io/tx',
   token: 'ETH',
+  tokens:{
+    ETH: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    ezETH: '0xbf5495efe5db9ce00f80364c8b423567e58d2110'
+  }
 };
-
-
-export const LINEA = {
-  name: 'LINEA',
-  chainId: 59144,
-  rpc: 'https://1rpc.io/linea',
-  explorer: 'https://lineascan.build/tx',
-  token: 'ETH',
-}
-
-export const moduleName = 'Consensys';
 
 export const decryptAccounts = true;
 
