@@ -1,4 +1,4 @@
-import { maxGwei, maxGweiLinea, moduleName, sleepOnHighGas } from '../const/config.const.js';
+import { maxGwei, sleepOnHighGas } from '../const/config.const.js';
 import { sleep } from './general.helper.js';
 
 export const isGasOkay = async (web3, ethAddress) => {
@@ -9,24 +9,7 @@ export const isGasOkay = async (web3, ethAddress) => {
 
   if (!isGasHigher) {
     console.log(
-      `${moduleName}. ${ethAddress}: gas is too high. ${currentGas} gwei now vs ${maxGwei} gwei limit. Waiting for ${sleepOnHighGas} seconds...`
-    );
-
-    await sleep(sleepOnHighGas * 1000);
-  }
-
-  return isGasHigher;
-};
-
-export const isGasOkayLinea = async (web3, ethAddress) => {
-  const gasPrice = await web3.eth.getGasPrice();
-  const currentGas = Number(web3.utils.fromWei(String(gasPrice), 'Gwei'));
-
-  const isGasHigher = currentGas <= maxGweiLinea;
-
-  if (!isGasHigher) {
-    console.log(
-      `${moduleName}. ${ethAddress}: gas is too high. ${currentGas} gwei now vs ${maxGweiLinea} gwei limit. Waiting for ${sleepOnHighGas} seconds...`
+      `Pendle Swap | ${ethAddress}: gas is too high. ${currentGas} gwei now vs ${maxGwei} gwei limit. Waiting for ${sleepOnHighGas} seconds...`
     );
 
     await sleep(sleepOnHighGas * 1000);
@@ -39,15 +22,6 @@ export const waitForGas = async (web3, walletAddress) => {
   let gasOkay = false;
   while (!gasOkay) {
     gasOkay = await isGasOkay(web3, walletAddress);
-  }
-
-  return;
-};
-
-export const waitForGasLinea = async (web3, walletAddress) => {
-  let gasOkay = false;
-  while (!gasOkay) {
-    gasOkay = await isGasOkayLinea(web3, walletAddress);
   }
 
   return;

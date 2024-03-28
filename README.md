@@ -1,8 +1,8 @@
-<h1 align="center">Consensys Mint NFT</h1>
+<h1 align="center">Pendle Swap Script</h1>
 
 <h2>✅ Функционал скрипта</h2>
 
-- Минт Open Edition и Community Edition NFT
+- Свап на https://app.pendle.finance/points/ezETH-zircuit и https://app.pendle.finance/points/ezETH
 - Возможность использования зашифрованных кошельков
 - Возможность использования обычные и мобильных прокси
 - Перемешивание кошельков

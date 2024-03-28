@@ -1,21 +1,20 @@
 import {
-  moduleName,
   decryptAccounts,
   decryptPass,
   sleepFrom,
   sleepTo,
   proxyURL,
-  MINT_OPEN_EDITION,
-  MINT_COMMUNITY_EDITION,
-  MINT_IF_EXIST,
+  shuffleWallets,
+  SwapYTexETH,
+  SwapYTexETHZircuit,
 } from "./const/config.const.js";
 import { importPrivatesKeys, importProxies } from "./helpers/accs.helper.js";
-import { randomIntInRange } from "./helpers/general.helper.js";
-import { waitForGas, waitForGasLinea } from "./helpers/gas.helper.js";
+import { randomIntInRange, shuffleArray } from "./helpers/general.helper.js";
+import { waitForGas } from "./helpers/gas.helper.js";
 import { decryptPrivateKey } from "./helpers/decryption.helper.js";
-import { banner, logger } from "./helpers/logger.helper.js";
+import { banner, logger, newWallet } from "./helpers/logger.helper.js";
 import { Proxy } from "./helpers/proxy.helper.js";
-import { ConsensysModule } from "./modules/consensys.module.js";
+import { PendleModule } from "./modules/pendle.module.js";
 
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -26,12 +25,12 @@ const proxy = await importProxies();
 console.log(banner);
 
 if (!(Array.isArray(privatesKeys) && privatesKeys.length)) {
-  logger.warn(`${moduleName}. No wallets found.`);
+  logger.warn(`Pendl Swap | No wallets found.`);
   process.exit(0);
 }
 
 if (proxy.length < privatesKeys.length && proxy.length != 0) {
-  logger.warn(`${moduleName}. Proxy count less than wallets.`);
+  logger.warn(`Pendl Swap | Proxy count less than wallets.`);
   process.exit(0);
 }
 
@@ -55,54 +54,74 @@ if (decryptAccounts) {
   }
 }
 
-// main loop
+if (shuffleWallets) {
+  shuffleArray(privatesKeys);
+}
+
 for (let privateKey of privatesKeys) {
   try {
+    console.log(newWallet);
     const proxyInstanse = new Proxy(proxy[privatesKeys.indexOf(privateKey)]);
-    const consensysInstance = new ConsensysModule(privateKey, proxyInstanse);
+    const pendleInstanse = new PendleModule(privateKey, proxyInstanse);
 
     await proxyInstanse.getIP();
 
     await proxyInstanse.changeIP();
 
-    if (MINT_OPEN_EDITION) {
-      // check gas
+    if (SwapYTexETH) {
       await waitForGas(
-        consensysInstance.web3Eth,
-        consensysInstance.walletAddress
+        pendleInstanse.web3Eth,
+        pendleInstanse.walletAddress
       );
+      while (true) {
+        try {
+          await pendleInstanse.setAmount();
+          await pendleInstanse.setGas();
+          await pendleInstanse.swapYTezETH();
+          break;
+        } catch (e) {
+          logger.error(e + ' | Try again after 10 sec');
+          pendleInstanse.changeRPC();
+          sleep(10000);
+        }
+      }
 
-      await consensysInstance.mintOpenEditionNFT();
     }
 
-    if (MINT_COMMUNITY_EDITION) {
-      if(!MINT_IF_EXIST){
-        const balance = await consensysInstance.ifExistCommunityEditonNFT();
-        if(balance > 0){
-          logger.info(`You have minted ${balance} NFT, skip wallet`);
-          continue;
-        } else logger.info(`NFT doesn't exist`);
-      }
-      if (MINT_OPEN_EDITION) {
-        const timing = randomIntInRange(sleepFrom, sleepTo);
-        logger.info(
-          `${moduleName}. Waiting for ${timing} seconds before next mint...`
-        );
-        await sleep(timing * 1000);
-      }
-      await waitForGasLinea(
-        consensysInstance.web3Linea,
-        consensysInstance.walletAddress
+    if(SwapYTexETH && SwapYTexETHZircuit){
+      const timing = randomIntInRange(sleepFrom, sleepTo);
+      logger.info(
+        `Pendl Swap | Waiting for ${timing} seconds before next swap...`
       );
+      await sleep(timing * 1000);
+    }
 
-      await consensysInstance.mintCommunityEditionNFT();
+    if (SwapYTexETHZircuit) {
+      await waitForGas(
+        pendleInstanse.web3Eth,
+        pendleInstanse.walletAddress
+      );
+      while (true) {
+        try {
+          await pendleInstanse.setAmount();
+          await pendleInstanse.setGas();
+          await pendleInstanse.swapYTezETHZircuit();
+          break;
+        } catch (e) {
+          logger.error(e + ' | Try again after 10 sec');
+          pendleInstanse.changeRPC();
+          sleep(10000);
+        }
+      }
+
+
     }
   } catch (error) {
     logger.error(error);
   }
   const timing = randomIntInRange(sleepFrom, sleepTo);
   logger.info(
-    `${moduleName}. Waiting for ${timing} seconds before next mint...`
+    `Pendl Swap | Waiting for ${timing} seconds before next wallet...`
   );
   await sleep(timing * 1000);
 }
