@@ -19,6 +19,8 @@ export const amountPercent = { // Диапазон в ПРОЦЕНТАХ
   max: 60
 }
 
+export const slippage = 50 //Слипедж 50 - 0,5%
+
 export const usePercent = true; // true - используем ПРОЦЕНТЫ, false - используем диапазон ЕФИРА
 
 // НАСТРОЙКИ ГАЗА

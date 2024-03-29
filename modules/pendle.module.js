@@ -1,7 +1,7 @@
 import Web3 from "web3";
 import fakeUa from "fake-useragent";
 import { getAbiByRelativePath, randomIntInRange, shuffleArray, sleep } from "../helpers/general.helper.js";
-import { ETH, amountETH, amountPercent, handleGas, useHandleGas, usePercent } from "../const/config.const.js";
+import { ETH, amountETH, amountPercent, handleGas, slippage, useHandleGas, usePercent } from "../const/config.const.js";
 import { logger } from "../helpers/logger.helper.js";
 import { makeURIWithParams } from "../helpers/string.helper.js";
 import { Proxy } from "../helpers/proxy.helper.js";
@@ -13,7 +13,7 @@ export class PendleModule {
     this.rpc = randomIntInRange(0, this.chain.rpc.length)
     this.provider = new Web3.providers.HttpProvider(this.chain.rpc[this.rpc]);
     this.web3Eth = new Web3(this.provider);
-
+    this.gas = 0;
     this.poolAddress = "";
 
     this.privateKey = privateKey;
@@ -54,7 +54,7 @@ export class PendleModule {
       tokenOut: this.chain.tokens.ezETH,
       amountIn: this.amount, // amount
       to: this.contractAddr,
-      slippageTolerance: 50,
+      slippageTolerance: slippage,
       useMeta: false,
       saveGas: 1,
       gasInclude: 1,
@@ -134,9 +134,10 @@ export class PendleModule {
 
   async setGas() {
     if (useHandleGas) {
-      this.gas = randomIntInRange(handleGas.min * 10** 9, handleGas.max * 10 ** 9);
+      this.gas = randomIntInRange(handleGas.min * 10 ** 9, handleGas.max * 10 ** 9);
       logger.info(`Use Handle Gas | ${(Number(this.gas) / 10 ** 9).toFixed(2)} Gwei`);
-    } else {
+    }
+    if (Number(await this.web3Eth.eth.getGasPrice()) < this.gas || this.gas == 0) {
       this.gas = await this.web3Eth.eth.getGasPrice();
       logger.info(`Use Ethereum Gas | ${(Number(this.gas) / 10 ** 9).toFixed(2)} Gwei`);
     }
@@ -144,7 +145,7 @@ export class PendleModule {
 
   async swapYTezETH() {
     logger.info("Prepare Swap YT ezETH");
-    if (this.amount === '0') return  logger.warn('No enough money');
+    if (this.amount === '0') return logger.warn('No enough money');
     await this.getMarketPrice();
 
     const YTamount = (Number(await this.getMarketOrder(this.pendleMarket, this.amount)) * 0.99).toFixed(0);
@@ -241,15 +242,15 @@ export class PendleModule {
             }
           }
         );
-      }).catch((e) => { 
-      logger.error(error + ' | Try again after 10 sec');
-      this.changeRPC();
-      sleep(10000);
-      this.swapYTezETH(); 
-    });
+      }).catch((e) => {
+        logger.error(error + ' | Try again after 10 sec');
+        this.changeRPC();
+        sleep(10000);
+        this.swapYTezETH();
+      });
 
     } catch (error) {
-      if(String(error).includes('insufficient')) return logger.warn('No enough money');
+      if (String(error).includes('insufficient')) return logger.warn('No enough money');
       logger.error(error + ' | Try again after 10 sec');
       this.changeRPC();
       sleep(10000);
@@ -353,10 +354,12 @@ export class PendleModule {
             }
           }
         );
-      }).catch((e) => { logger.error(error + ' | Try again after 10 sec');
-      this.changeRPC();
-      sleep(10000);
-      this.swapYTezETHZircuit();  });
+      }).catch((e) => {
+        logger.error(error + ' | Try again after 10 sec');
+        this.changeRPC();
+        sleep(10000);
+        this.swapYTezETHZircuit();
+      });
 
       return swapExactTokenResult;
 
