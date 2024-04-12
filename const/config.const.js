@@ -2,10 +2,10 @@
 
 // НАСТРОЙКИ ЗАПУСКА
 
-export const sleepFrom = 9; // Задержка между активностями и кошельками ОТ
-export const sleepTo = 15; // Задержка между активностями и кошельками ДО
+export const sleepFrom = 90; // Задержка между активностями и кошельками ОТ
+export const sleepTo = 150; // Задержка между активностями и кошельками ДО
 
-export const shuffleWallets = true; // Перемешивание кошельков
+export const shuffleWallets = true; // true - перемешиваем кошельки; false - не перемешиваем
 
 // НАСТРОЙКИ СУММЫ
 
@@ -34,13 +34,13 @@ export const handleGas = { // Диапазон для выставления г�
   max: 2
 }
 
-export const useHandleGas = true; // true - используем указанный диапазон газа, false - используем газ в сети
+export const useHandleGas = false; // true - используем указанный диапазон газа, false - используем газ в сети
 
 // ВЫБОР ПРОЕКТОВ
 
-export const SwapYTexETH = true; // true - запускаем свап YT exETH, false - пропускаем
+export const SwapYTexETH = true; // true - запускаем свап YT ezETH (Renzo), false - пропускаем
 
-export const SwapYTexETHZircuit = true; // true - запускаем свап YT exETH (Zircuit), false - пропускаем
+export const SwapYTexETHZircuit = false; // true - запускаем свап YT ezETH (Zircuit), false - пропускаем
 
 // НАСТРОЙКИ СЕТИ
 
@@ -62,7 +62,7 @@ export const ETH = {
 
 // ШИФРОВКА КОШЕЛЬКОВ DEGENSOFT
 
-export const decryptAccounts = false; // true - рассшифровка, false - без шифровки
+export const decryptAccounts = true; // true - рассшифровка, false - без шифровки
 
 export const decryptPass = '12345'; // ПАРОЛЬ от кошельков
 
